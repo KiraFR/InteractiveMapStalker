@@ -72,6 +72,6 @@ new CronJob('30 21 12 * * *', async () => {
     });
 }, null, true, 'Europe/Paris');
 
-app.listen(3080, () => {
-    console.log('listening on port 3080');
+app.listen(8080, () => {
+    console.log('listening on port 8080');
 })

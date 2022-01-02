@@ -287,7 +287,7 @@ function App() {
 
     const onClickAccess = useCallback(async () => {
         if (password !== '') {
-            const result = await fetchJS('http://localhost:3080/access',
+            const result = await fetchJS('http://localhost:8080/access',
                 {
                     method: 'POST',
                     body: JSON.stringify({ password }),
@@ -331,7 +331,7 @@ function App() {
             faction: f
         };
 
-        fetchJS('http://localhost:3080/setZone',
+        fetchJS('http://localhost:8080/setZone',
             {
                 method: 'POST',
                 body: JSON.stringify(body),
@@ -413,7 +413,7 @@ function App() {
         yArray.shift();
 
         const init = async () => {
-            const data = await fetchJS('http://localhost:3080/getZone');
+            const data = await fetchJS('http://localhost:8080/getZone');
             let tmp = [ ];
             await asyncForEach(xArray, async xValue => {
                 const charX = String.fromCharCode(64 + xValue);
