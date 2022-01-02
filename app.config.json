@@ -1,0 +1,10 @@
+{
+  "apps" : [
+    {
+      "name"      : "InteractiveMapStalker",
+      "script"    : "npx",
+      "interpreter": "none",
+      "args": "serve -s build"
+    }
+  ]
+}
