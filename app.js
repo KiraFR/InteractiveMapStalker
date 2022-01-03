@@ -22,7 +22,6 @@ app.post('/api/access', (req, res) => {
     const { password } = req.body;
     try {
         const { pass } = getJson();
-        console.log(pass, password, password === pass)
         res.json({ access : password === pass });
     } catch (err) {
         console.error(err);
@@ -54,9 +53,11 @@ app.post('/api/setZone', (req, res) => {
 
         fs.writeFile('data.json', JSON.stringify({...file, data: newData}), (err) => {
             if (err) return console.error(err);
+            res.status(200);
         });
     } catch (err) {
         console.error(err);
+        res.status(200);
     }
 
 });
