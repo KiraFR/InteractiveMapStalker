@@ -18,7 +18,7 @@ const getJson = () => {
     }
 };
 
-app.post('/InteractiveMapStalker/api/access', (req, res) => {
+app.post('/api/access', (req, res) => {
     const { password } = req.body;
     try {
         const { pass } = getJson();
@@ -29,7 +29,7 @@ app.post('/InteractiveMapStalker/api/access', (req, res) => {
     }
 })
 
-app.get('/InteractiveMapStalker/api/getZone', (req, res) => {
+app.get('/api/getZone', (req, res) => {
     try {
         const { data } = getJson();
         res.json(data);
@@ -39,7 +39,7 @@ app.get('/InteractiveMapStalker/api/getZone', (req, res) => {
     }
 });
 
-app.post('/InteractiveMapStalker/api/setZone', async (req, res) => {
+app.post('/api/setZone', async (req, res) => {
     const { coordinate, faction } = req.body;
 
     try {
