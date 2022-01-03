@@ -18,7 +18,7 @@ const getJson = () => {
     }
 };
 
-app.post('/api/access', (req, res) => {
+app.post('/InteractiveMapStalker/api/access', (req, res) => {
     const { password } = req.body;
     try {
         const { pass } = getJson();
@@ -29,7 +29,7 @@ app.post('/api/access', (req, res) => {
     }
 })
 
-app.get('/api/getZone', (req, res) => {
+app.get('/InteractiveMapStalker/api/getZone', (req, res) => {
     try {
         const { data } = getJson();
         res.json(data);
@@ -39,7 +39,7 @@ app.get('/api/getZone', (req, res) => {
     }
 });
 
-app.post('/api/setZone', async (req, res) => {
+app.post('/InteractiveMapStalker/api/setZone', async (req, res) => {
     const { coordinate, faction } = req.body;
 
     try {
@@ -63,16 +63,18 @@ app.post('/api/setZone', async (req, res) => {
 
 });
 
-
-new CronJob('0 0 * * * *', async () => {
-
-    fs.copyFile("data.json", `./backup/data_${new Date().getTime()}.json`, (err) => {
+const backupFnc = async () => {
+    const date = new Date();
+    fs.copyFile("data.json", `./backup/data_${date.getDate()}_${date.getMonth()}_${date.getFullYear()}.json`, (err) => {
         console.log('copied');
         if (err) {
             console.log("Error Found:", err);
         }
     });
-}, null, true, 'Europe/Paris');
+};
+
+new CronJob('0 0 6 * * *', backupFnc, null, true, 'Europe/Paris');
+new CronJob('0 0 20 * * *', backupFnc, null, true, 'Europe/Paris');
 
 app.listen(8080, () => {
     console.log('listening on port 8080');
