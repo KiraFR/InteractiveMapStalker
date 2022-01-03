@@ -8,7 +8,7 @@ const Container = styled.div `
     width: 97px;
     height: calc(100vh / 12 - 1px);
     position: relative;
-    margin: 1px;
+    margin: 0.08em;
     ${({ $width, $height, $y, $x }) => $width && $height && $y && $x && css `
         width: calc(${$width}px / ${$x} - 2px);
         height: calc(${$height}px / ${$y} - 1px);
