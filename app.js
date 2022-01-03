@@ -18,7 +18,7 @@ const getJson = () => {
     }
 };
 
-app.post('/access', (req, res) => {
+app.post('/api/access', (req, res) => {
     const { password } = req.body;
     try {
         const { pass } = getJson();
@@ -30,7 +30,7 @@ app.post('/access', (req, res) => {
     }
 })
 
-app.get('/getZone', (req, res) => {
+app.get('/api/getZone', (req, res) => {
     try {
         const { data } = getJson();
         res.json(data);
@@ -40,7 +40,7 @@ app.get('/getZone', (req, res) => {
     }
 });
 
-app.post('/setZone', (req, res) => {
+app.post('/api/setZone', (req, res) => {
     const { coordinate, faction } = req.body;
 
     try {
@@ -62,7 +62,7 @@ app.post('/setZone', (req, res) => {
 });
 
 
-new CronJob('30 21 12 * * *', async () => {
+new CronJob('0 0 * * * *', async () => {
 
     fs.copyFile("data.json", `./backup/data_${new Date().getTime()}.json`, (err) => {
         console.log('copied');
