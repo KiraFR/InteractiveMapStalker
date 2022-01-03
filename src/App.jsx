@@ -395,16 +395,15 @@ function App() {
     }, [ setPasswordVisible ]);
 
     const onClickContainer = useCallback(event => {
-        if (!editFaction) {
-            const rect = event.target.getBoundingClientRect();
-            const uuidAnnotion = uuid();
-            const xPos = ((event.clientX - rect.left) / width) * 100;
-            const yPos = ((event.clientY - rect.top) / height) * 100;
-
-            setNewAnnotation({ x: xPos, y: yPos, uuid : uuidAnnotion });
-            setOpenModal(true);
-        }
-    }, [ width, height, editFaction, setNewAnnotation, setOpenModal ]);
+        //if (!editFaction) {
+        //    const rect = event.target.getBoundingClientRect();
+        //    const uuidAnnotion = uuid();
+        //    const xPos = ((event.clientX - rect.left) / width) * 100;
+        //    const yPos = ((event.clientY - rect.top) / height) * 100;
+        //    setNewAnnotation({ x: xPos, y: yPos, uuid : uuidAnnotion });
+        //    setOpenModal(true);
+        //}
+    }, [ /*width, height, editFaction, setNewAnnotation, setOpenModal*/ ]);
 
     useEffect(() => {
         const xArray = [...Array(x + 1).keys()];
