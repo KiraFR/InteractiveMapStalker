@@ -287,7 +287,7 @@ function App() {
 
     const onClickAccess = useCallback(async () => {
         if (password !== '') {
-            const result = await fetchJS('https://delannoyjimmy.fr:8080/access',
+            const result = await fetchJS('https://delannoyjimmy.fr/api/access',
                 {
                     method: 'POST',
                     body: JSON.stringify({ password }),
@@ -331,7 +331,7 @@ function App() {
             faction: f
         };
 
-        fetchJS('https://delannoyjimmy.fr:8080/setZone',
+        fetchJS('https://delannoyjimmy.fr/api/setZone',
             {
                 method: 'POST',
                 body: JSON.stringify(body),
@@ -413,7 +413,7 @@ function App() {
         yArray.shift();
 
         const init = async () => {
-            const data = await fetchJS('https://delannoyjimmy.fr:8080/getZone');
+            const data = await fetchJS('https://delannoyjimmy.fr/api/getZone');
             let tmp = [ ];
             await asyncForEach(xArray, async xValue => {
                 const charX = String.fromCharCode(64 + xValue);
