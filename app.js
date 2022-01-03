@@ -39,7 +39,7 @@ app.get('/api/getZone', (req, res) => {
     }
 });
 
-app.post('/api/setZone', (req, res) => {
+app.post('/api/setZone', async (req, res) => {
     const { coordinate, faction } = req.body;
 
     try {
@@ -51,10 +51,11 @@ app.post('/api/setZone', (req, res) => {
                 : coords
         );
 
-        fs.writeFile('data.json', JSON.stringify({...file, data: newData}), (err) => {
+        await fs.writeFile('data.json', JSON.stringify({...file, data: newData}), (err) => {
             if (err) return console.error(err);
-            res.status(200);
+            console.log(`done : ${coordinate} : ${faction}`);
         });
+        res.status(200);
     } catch (err) {
         console.error(err);
         res.status(200);
