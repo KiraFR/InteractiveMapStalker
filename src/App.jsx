@@ -272,8 +272,8 @@ function App() {
     const resizeEvent = useCallback(() => {
         const picture = document.getElementById('map');
         if(picture.clientWidth > 0){
-            setWidth(picture.clientWidth - 3);
-            setHeight(picture.clientHeight - 4);
+            setWidth(picture.clientWidth + 1);
+            setHeight(picture.clientHeight);
         } else {
             window.setTimeout(resizeEvent, 100);
         }
