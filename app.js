@@ -53,12 +53,12 @@ app.post('/api/setZone', async (req, res) => {
 
         await fs.writeFile('data.json', JSON.stringify({...file, data: newData}), (err) => {
             if (err) return console.error(err);
-            console.log(`done : ${coordinate} : ${faction}`);
+            console.log(`done => ${coordinate} : ${faction}`);
         });
-        res.status(200);
+        res.json({status : 200});
     } catch (err) {
         console.error(err);
-        res.status(200);
+        res.status(500);
     }
 
 });
