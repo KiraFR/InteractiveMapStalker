@@ -9,6 +9,7 @@ This project was created to show zone handled by different factions on the serve
 
 - To install the packages:
   - `npm i`
+- Rename the file `data.default.json` to `data.json`
 - To start the project:
   - `npm start` and `node app.js` (because there is front and back server)
 - To build the project:
