@@ -1,25 +1,21 @@
-import React, { useEffect, useCallback, useState, useMemo } from 'react';
-import styled from 'styled-components';
-import Button from '@mui/material/Button';
-import Select from '@mui/material/Select';
-import MenuItem from '@mui/material/MenuItem';
-import Card from '@mui/material/Card';
-import CardHeader from '@mui/material/CardHeader';
-import CardContent from '@mui/material/CardContent';
-import FormControl from '@mui/material/FormControl';
-import Modal from '@mui/material/Modal';
-import Box from '@mui/material/Box';
-import Fade from '@mui/material/Fade';
-import TextField from '@mui/material/TextField';
-
-import { GiWineBottle, GiScorpion } from "react-icons/gi";
-import { BsBoxArrowDown, BsArrowsFullscreen } from "react-icons/bs";
-import { MdCrueltyFree } from "react-icons/md";
-import { CgDanger } from "react-icons/cg";
-import { AiTwotoneHome } from "react-icons/ai";
-import { FaReact, FaAnkh, FaHippo, FaEarlybirds, FaPoo, FaRadiation } from  "react-icons/fa";
-
-import { asyncForEach } from './utils/utils';
+import React, { useEffect, useCallback, useState, useMemo, useRef } from 'react';
+import {
+    Select,
+    MenuItem,
+    CardHeader,
+    CardContent,
+    FormControl,
+    Modal,
+    Box,
+    Fade,
+    TextField,
+    FormGroup,
+    InputLabel,
+    Divider
+} from '@mui/material';
+import { SketchPicker } from 'react-color';
+import styled, { css } from 'styled-components';
+import { asyncForEach, uuid, fetchJS } from './utils';
 import Map from './pictures/map.png';
 import STALKER_logo from './pictures/STALKER_logo.png';
 import DayZ_Logo from './pictures/DayZ_Logo.png';
@@ -29,229 +25,50 @@ import Grid from './components/Grid';
 import Annotation from './components/Annotation';
 import Context from './components/Context';
 
-const uuid = () => {
-    const s4 = () => Math.floor((1 + Math.random()) * 0x10000).toString(16).substring(1);
-    return s4() + s4() + '-' + s4();
-};
+import ButtonEdit from './style/ButtonEdit';
+import ColorSquare from './style/ColorSquare';
+import Container from './style/Container';
+import { ListChild, ListLegend } from './style/List';
+import { Image, Logo, LogoContainer } from './style/Logo';
+import { styleBox, CardPerso, Text } from './style/others';
+import NavBar from './style/NavBar';
+import Wrapper from './style/Wrapper';
 
+import { x, y, icons, factions } from './config';
 
-const icons = [
-    {
-        name: 'Ecologiste ',
-        icon: FaReact,
-    },
-    {
-        name: 'Monolith',
-        icon: FaAnkh,
-    },
-    {
-        name: 'Devoir',
-        icon: FaHippo,
-    },
-    {
-        name: 'Mercenaire ',
-        icon: FaEarlybirds,
-    },
-    {
-        name: 'Bandit',
-        icon: FaPoo,
-    },
-    {
-        name: 'Loner',
-        icon: FaRadiation,
-    },
-    {
-        name: 'Militaire',
-        icon: GiWineBottle,
-    },
-    {
-        name: 'Renega',
-        icon: GiScorpion,
-    },
-    {
-        name: 'Extraction',
-        icon: BsBoxArrowDown,
-    },
-    {
-        name: 'Cible',
-        icon: BsArrowsFullscreen,
-    },
-    {
-        name: 'Liberté',
-        icon: MdCrueltyFree,
-    },
-    {
-        name: 'Zone à risque',
-        icon: CgDanger,
-    },
-    {
-        name: 'Maison',
-        icon: AiTwotoneHome,
-    },
-];
-
-const CardPerso = styled(Card) `
-    margin: 10px 0;
-`
-
-const Image = styled.img `
-    height: 100vh;
-`;
-
-const Logo = styled.img `
-    width: 50%;
-`;
-
-const Container = styled.div`
-    display: flex;
-    height: 100%;
-    align-items: center;
-    flex-wrap: wrap;
-    align-content: center;
-    justify-content: flex-start;
-    flex-direction: column;
-    background-color: #2E2E30;
-    position: relative;
-`;
-
-const Wrapper = styled.div`
-    height: 100vh;
-    display: flex;
-    background-color: #2E2E30;
-`;
-
-const NavBar = styled.div`
-    padding: 6px;
-    box-shadow: 0 0 10px 1px rgb(0 0 0 / 30%);
-    background-color: #4a4a4a;
-    display: flex;
-    flex-direction: column;
-    width: 220px;
-    min-width: 220px;
-    z-index: 1;
-`;
-
-const ButtonEdit = styled(Button) `
-    background-color: rgb(144, 202, 249) !important;
-    color: black !important;
-    font-weight: 700 !important;
-`;
-
-const Text = styled.span`
+const Label = styled.span`
     margin-left: 10px;
+    text-transform: uppercase;
+    font-weight: 700;
 `;
 
-const ColorSquare = styled.span`
-    border: 2px solid #1c1c1c;
-    float: left;
+const Picker = styled.div`
+    ${({ $color }) => $color && css `
+        background-color: ${$color};
+    `}
     width: 20px;
     height: 20px;
-    margin: 5px;
-    border-radius: 3px;
+    border-radius: 4px;
+    border: 1px solid #dbdbdb;
+    box-shadow: 0px 2px 4px -1px rgb(0 0 0 / 20%);
+    cursor: pointer;
 
-    &.mercenary {
-        background: rgb(0 55 255 / 35%);
-    }
-    &.duty {
-        background: rgb(255 0 0 / 35%);
-    }
-    &.freedom {
-        background: rgb(1 211 8 / 35%);
-    }
-    &.military {
-        background: rgb(38 98 0 / 35%);
-    }
-    &.brotherhood {
-        background: rgb(60 20 0 / 35%);
-    }
-    &.csk {
-        background: rgb(2 138 235 / 35%);
-    }
-    &.ecologist {
-        background: rgb(231 117 0 / 35%);
+    &:hover {
+      filter: brightness(90%);
     }
 `;
 
-const ListLegend = styled.div`
+const ColorPicker = styled.div`
     display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    align-content: center;
-    font-weight: 500;
-    font-size: 20px;
-    color: #c1c1c1;
+    width: 100%;
+    margin-bottom: 15px;
 `;
 
-const ListChild = styled.div`
-    list-style: none;
+const ContainerPicker = styled.div`
+    position: absolute;
+    z-index: 1;
+    left: 60px;
 `;
-
-const LogoContainer = styled.div `
-    display: flex;
-    flex-direction: row;
-    align-items: flex-end;
-    justify-content: flex-start;
-    align-content: flex-end;
-    height: 100%;
-`;
-
-const x = 9;
-const y = 12;
-
-const factions = [
-    {
-        name : 'Aucune faction',
-        value : 'none'
-    },
-    {
-        name : 'Mercenaire',
-        value : 'mercenary'
-    },
-    {
-        name : 'Militaire',
-        value : 'military'
-    },
-    {
-        name : 'Devoir',
-        value : 'duty'
-    },
-    {
-        name : 'Liberté',
-        value : 'freedom'
-    },
-    {
-        name : 'Bandits',
-        value : 'brotherhood'
-    },
-    {
-        name : 'Clear Sky',
-        value : 'csk'
-    },
-    {
-        name : 'Ecologiste',
-        value : 'ecologist'
-    }
-];
-
-const styleBox = {
-  position: 'absolute',
-  top: '50%',
-  left: '50%',
-  transform: 'translate(-50%, -50%)',
-  width: 400,
-  bgcolor: 'background.paper',
-  border: '2px solid #000',
-  boxShadow: 24,
-  pt: 2,
-  px: 4,
-  pb: 3,
-};
-
-const fetchJS = async (url, option = null) => {
-    const result = await fetch(url, option);
-    const json = await result.json();
-    return json;
-}
 
 function App() {
     const [ width, setWidth ] = useState(null);
@@ -266,8 +83,13 @@ function App() {
 
     const [ newAnnotation, setNewAnnotation] = useState(null);
     const [ openModal, setOpenModal ] = useState(false);
+    const [ openColor, setOpenColor ] = useState(false);
 
     const [ password, setPassword ] = useState('');
+    const [ titleAnnotation, setTitleAnnotation ] = useState('');
+    const [ iconAnnotation, setIconAnnotation ] = useState('');
+    const [ descAnnotation, setDescAnnotation ] = useState('');
+    const [ colorAnnotation, setColorAnnotation ] = useState('#f6b73c');
 
     const resizeEvent = useCallback(() => {
         const picture = document.getElementById('map');
@@ -277,7 +99,6 @@ function App() {
         } else {
             window.setTimeout(resizeEvent, 100);
         }
-
     }, [ setWidth, setHeight ]);
 
     useEffect(() => {
@@ -287,7 +108,7 @@ function App() {
 
     const onClickAccess = useCallback(async () => {
         if (password !== '') {
-            const result = await fetchJS('https://delannoyjimmy.fr/api/access',
+            const result = await fetchJS('http://localhost:8080/api/access',
                 {
                     method: 'POST',
                     body: JSON.stringify({ password }),
@@ -307,6 +128,43 @@ function App() {
     }, [ password , setPassword, setAccess, setPasswordVisible ]);
 
     const onChangePassword = useCallback(event => setPassword(event.target.value), [ setPassword ]);
+    const onChangeTitleAnnotation = useCallback(event => setTitleAnnotation(event.target.value), [ setTitleAnnotation ]);
+    const onChangeDescAnnotation = useCallback(event => setDescAnnotation(event.target.value), [ setDescAnnotation ]);
+    const onChangeIconAnnotation = useCallback(event => setIconAnnotation(event.target.value), [ setIconAnnotation ]);
+    const onChangeColorAnnotation = useCallback(color => { setColorAnnotation(color.hex) }, [ setColorAnnotation ]);
+    const onBlurColorAnnotation = useCallback(() => setOpenColor(false), [ setOpenColor ]);
+    const onClickColorAnnotation = useCallback(event => {
+        setOpenColor(true);
+        event.stopPropagation();
+    }, [ setOpenColor ]);
+
+    const onClickAddAnnotation = useCallback(() => {
+        const annotation = {
+            ...newAnnotation,
+            title: titleAnnotation,
+            description: descAnnotation,
+            icon: iconAnnotation,
+            color: colorAnnotation
+        };
+
+        setAnnotations([ ...annotations, annotation ]);
+        setNewAnnotation('');
+        setTitleAnnotation('');
+        setDescAnnotation('');
+        setIconAnnotation('');
+        setColorAnnotation('#f6b73c');
+
+        setOpenModal(false);
+
+    }, [
+        annotations, setAnnotations,
+        newAnnotation, setNewAnnotation,
+        titleAnnotation, setTitleAnnotation,
+        descAnnotation, setDescAnnotation,
+        iconAnnotation, setIconAnnotation,
+        colorAnnotation,
+        setOpenModal,
+    ]);
 
     const onClick = useCallback(() => {
         if (access) setEditFaction(!editFaction);
@@ -317,7 +175,7 @@ function App() {
 
         const tmp = oldCoordinates.map(coordinateX =>
             coordinateX.map(coord => {
-                if(coord.coordinates === selected){
+                if (coord.coordinates === selected) {
                     return { ...coord, faction: f }
                 } else {
                     return coord;
@@ -331,7 +189,7 @@ function App() {
             faction: f
         };
 
-        fetchJS('https://delannoyjimmy.fr/api/setZone',
+        fetchJS('http://localhost:8080/api/setZone',
             {
                 method: 'POST',
                 body: JSON.stringify(body),
@@ -387,8 +245,22 @@ function App() {
     }), [ openList ]);
 
     const onhandleCloseModal = useCallback(event => {
+        setNewAnnotation('');
+        setTitleAnnotation('');
+        setDescAnnotation('');
+        setIconAnnotation('');
+        setColorAnnotation('#f6b73c');
+        setOpenColor(false)
         setOpenModal(false);
-    }, [ setOpenModal ]);
+    }, [
+        setOpenModal,
+        setNewAnnotation,
+        setTitleAnnotation,
+        setDescAnnotation,
+        setIconAnnotation,
+        setColorAnnotation,
+        setOpenColor
+    ]);
 
     const onhandleClosePasswordModal = useCallback(event => {
         setPasswordVisible(false);
@@ -403,7 +275,7 @@ function App() {
         //    setNewAnnotation({ x: xPos, y: yPos, uuid : uuidAnnotion });
         //    setOpenModal(true);
         //}
-    }, [ /*width, height, editFaction, setNewAnnotation, setOpenModal*/ ]);
+    }, [ width, height, editFaction, setNewAnnotation, setOpenModal ]);
 
     useEffect(() => {
         const xArray = [...Array(x + 1).keys()];
@@ -412,7 +284,7 @@ function App() {
         yArray.shift();
 
         const init = async () => {
-            const data = await fetchJS('https://delannoyjimmy.fr/api/getZone');
+            const data = await fetchJS('http://localhost:8080/api/getZone');
             let tmp = [ ];
             await asyncForEach(xArray, async xValue => {
                 const charX = String.fromCharCode(64 + xValue);
@@ -449,8 +321,6 @@ function App() {
         });
 
     }, []);
-
-
 
     return (
         <Context.Provider value={providerValue}>
@@ -512,7 +382,6 @@ function App() {
                         <Logo src={DayZ_Logo} alt="logoDayz" />
                     </LogoContainer>
                 </NavBar>
-
                 <Container onClick={onClickContainer} className='map-container'>
                     <Grid
                         x={x}
@@ -535,62 +404,106 @@ function App() {
             </Wrapper>
 
             <Modal
-              open={openModal}
-              onClose={onhandleCloseModal}
-              aria-labelledby="annotation-modal-title"
-              aria-describedby="annotation-modal-description"
+                open={openModal}
+                onClose={onhandleCloseModal}
+                aria-labelledby="annotation-modal-title"
+                aria-describedby="annotation-modal-description"
+
             >
                 <Fade in={openModal}>
-                    <Box sx={{ ...styleBox, width: 500 }}>
+                    <Box sx={{ ...styleBox, width: 500 }} >
                         <h2 id="parent-modal-title">Ajouter une annotation</h2>
-                            <FormControl sx={{ width: '90%' }}>
+                        <FormGroup onClick={onBlurColorAnnotation}>
+                            <TextField
+                                id="outlined-basic"
+                                placeholder="Titre de l'annotation"
+                                variant="outlined"
+                                label="Titre de l'annotation"
+                                type="text"
+                                value={titleAnnotation}
+                                onChange={onChangeTitleAnnotation}
+                                sx={{ width: '100%', marginBottom: '15px' }}
+                            />
+
+                            <TextField
+                                label="Description de l'annotation"
+                                placeholder="Description de l'annotation"
+                                variant="outlined"
+                                value={descAnnotation}
+                                onChange={onChangeDescAnnotation}
+                                multiline
+                                maxRows={Infinity}
+                                sx={{ width: '100%', marginBottom: '15px' }}
+                            />
+                            <FormControl sx={{ width: '100%', marginBottom: '15px' }}>
+                                <InputLabel id="Icon-select-modal-label">Icon</InputLabel>
                                 <Select
-                                    id="select-faction"
-                                    value={factionSelected}
-                                    label="Faction"
-                                    onChange={onChange}
+                                    labelId="Icon-select-modal-label"
+                                    id="Icon-select-modal"
+                                    value={iconAnnotation}
+                                    label="Icon"
+                                    onChange={onChangeIconAnnotation}
                                 >
                                     {
                                         icons.map(icon =>
-                                            <MenuItem key={uuid()} value={icon.name}>
-                                                <icon.icon /> <Text>{icon.name.replaceAll("Gi", "")}</Text>
+                                            <MenuItem key={uuid()} value={icon.name} name={icon.name}>
+                                                <icon.icon /> <Text>{icon.name}</Text>
                                             </MenuItem>
                                         )
                                     }
                                 </Select>
                             </FormControl>
+                            <Divider sx={{ width: '100%', marginBottom: '15px' }} />
+                            <ColorPicker style={{ width: '100%', marginBottom: '15px' }}>
+                                <Picker className='colorPicker' $color={colorAnnotation} onClick={onClickColorAnnotation} />
+                                { openColor && (
+                                    <ContainerPicker onClick={event => event.stopPropagation()}>
+                                        <SketchPicker id="colorPicker-modal" onChange={onChangeColorAnnotation} color={colorAnnotation} />
+                                    </ContainerPicker>
+                                )}
+                                <Label htmlFor="colorPicker-modal" id="colorPicker-modal-label">{colorAnnotation}</Label>
+                            </ColorPicker>
+                            <Divider sx={{ width: '100%', marginBottom: '15px' }} />
+                            <ButtonEdit
+                                variant="contained"
+                                color="secondary"
+                                onClick={onClickAddAnnotation}
+                            >
+                                Ajouter
+                            </ButtonEdit>
+                        </FormGroup>
                     </Box>
                 </Fade>
             </Modal>
 
             <Modal
-              open={passwordVisible}
-              onClose={onhandleClosePasswordModal}
-              aria-labelledby="edit-faction-modal-title"
-              aria-describedby="edit-faction-modal-description"
+                open={passwordVisible}
+                onClose={onhandleClosePasswordModal}
+                aria-labelledby="edit-faction-modal-title"
+                aria-describedby="edit-faction-modal-description"
             >
                 <Fade in={passwordVisible}>
                     <Box sx={{ ...styleBox, width: 500 }}>
                         <h2 id="edit-faction- parent-modal-title">Accès à la modification des zones</h2>
-                            <FormControl sx={{ width: '90%' }}>
-                                <TextField
-                                    id="outlined-basic"
-                                    variant="outlined"
-                                    label="Mot de passe"
-                                    type="password"
-                                    autoComplete="current-password"
-                                    value={password}
-                                    onChange={onChangePassword}
-                                />
-                                <ButtonEdit
-                                    variant="contained"
-                                    color="secondary"
-                                    onClick={onClickAccess}
-                                    sx={{ margin: '10px 0' }}
-                                >
-                                    Débloquer
-                                </ButtonEdit>
-                            </FormControl>
+                        <FormControl sx={{ width: '90%' }}>
+                            <TextField
+                                id="outlined-basic"
+                                variant="outlined"
+                                label="Mot de passe"
+                                type="password"
+                                autoComplete="current-password"
+                                value={password}
+                                onChange={onChangePassword}
+                            />
+                            <ButtonEdit
+                                variant="contained"
+                                color="secondary"
+                                onClick={onClickAccess}
+                                sx={{ margin: '10px 0' }}
+                            >
+                                Débloquer
+                            </ButtonEdit>
+                        </FormControl>
                     </Box>
                 </Fade>
             </Modal>
