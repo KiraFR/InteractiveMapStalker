@@ -29,6 +29,9 @@ const ColorSquare = styled.span`
     &.ecologist {
         background: rgb(231 117 0 / 35%);
     }
+    &.sin {
+        background: rgb(255 235 0 / 35%);
+    }
 `;
 
 export default ColorSquare;
