@@ -398,7 +398,7 @@ function App() {
                         maxWidth={width}
                         maxHeight={height}
                     />
-                    <Image src="/MAP.jpg" alt='map' id='map'/>
+                    <Image src="/MAP_2.webp" alt='map' id='map'/>
                 </Container>
             </Wrapper>
 
