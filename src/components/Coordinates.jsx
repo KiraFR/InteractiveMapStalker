@@ -23,23 +23,33 @@ const Container = styled.div `
     &.mercenary {
         background: rgb(0 55 255 / 35%);
     }
+
     &.duty {
         background: rgb(255 0 0 / 35%);
     }
+
     &.freedom {
         background: rgb(1 211 8 / 35%);
     }
+
     &.military {
         background: rgb(38 98 0 / 35%);
     }
+
     &.brotherhood {
         background: rgb(60 20 0 / 35%);
     }
+
     &.csk {
         background: rgb(2 138 235 / 35%);
     }
+
     &.ecologist {
         background: rgb(231 117 0 / 35%);
+    }
+
+    &.sin {
+        background: rgb(255 235 0 / 35%);
     }
 
     &:last-child {
@@ -51,7 +61,6 @@ const Container = styled.div `
         border-radius: 3px;
         box-shadow: 0 0 10px 1px rgb(0 0 0 / 30%);
         cursor: pointer;
-
 
         &:hover {
             background-color: #00000045;
@@ -83,6 +92,10 @@ const Container = styled.div `
 
         &.ecologist:hover {
             background-color: rgb(231 117 0 / 60%);
+        }
+
+        &.sin:hover {
+            background-color: rgb(255 235 0 / 60%);
         }
 
     `}

@@ -74,7 +74,6 @@ const backupFnc = async () => {
 };
 
 new CronJob('0 0 6 * * *', backupFnc, null, true, 'Europe/Paris');
-new CronJob('0 0 20 * * *', backupFnc, null, true, 'Europe/Paris');
 
 app.listen(8080, () => {
     console.log('listening on port 8080');

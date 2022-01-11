@@ -5,8 +5,8 @@ import { CgDanger } from "react-icons/cg";
 import { AiTwotoneHome } from "react-icons/ai";
 import { FaReact, FaAnkh, FaHippo, FaEarlybirds, FaPoo, FaRadiation } from "react-icons/fa";
 
-const x = 9;
-const y = 12;
+const x = 18;
+const y = 24;
 
 const icons = [
     {
@@ -95,6 +95,10 @@ const factions = [
     {
         name : 'Ecologiste',
         value : 'ecologist'
+    },
+    {
+        name : 'Sin',
+        value : 'sin'
     }
 ];
 
