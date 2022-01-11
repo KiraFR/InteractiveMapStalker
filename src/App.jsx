@@ -16,7 +16,6 @@ import {
 import { SketchPicker } from 'react-color';
 import styled, { css } from 'styled-components';
 import { asyncForEach, uuid, fetchJS } from './utils';
-import Map from '../public/map.png';
 import STALKER_logo from './pictures/STALKER_logo.png';
 import DayZ_Logo from './pictures/DayZ_Logo.png';
 import './App.css';
@@ -399,7 +398,7 @@ function App() {
                         maxWidth={width}
                         maxHeight={height}
                     />
-                    <Image src="%PUBLIC_URL%/MAP.jpg" alt='map' id='map'/>
+                    <Image src="/MAP.jpg" alt='map' id='map'/>
                 </Container>
             </Wrapper>
 
