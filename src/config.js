@@ -5,8 +5,8 @@ import { CgDanger } from "react-icons/cg";
 import { AiTwotoneHome } from "react-icons/ai";
 import { FaReact, FaAnkh, FaHippo, FaEarlybirds, FaPoo, FaRadiation } from "react-icons/fa";
 
-const x = 18;
-const y = 24;
+const x = 20;
+const y = 20;
 
 const icons = [
     {
